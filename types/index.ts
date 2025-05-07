@@ -35,4 +35,17 @@ export interface FijosCorridosBet {
   fijoAmount: number | null; // Allow null for empty state
   corridoAmount: number | null; // Allow null for empty state
 }
+
+
+export interface ParletBet {
+  id: string;
+  bets: number[];
+  amount: number;
+}
+
+export interface CentenaBet {
+  id: string;
+  bet: number;
+  amount: number;
+}
 export * from "./rules"

@@ -15,11 +15,11 @@ export default function BetCircle({ value, onPress }: BetCircleProps) {
   return (
     // Changed View to TouchableOpacity and added onPress
     <TouchableOpacity 
-      style={[styles.circle, { borderColor: Colors[colorScheme].primary }]}
+      style={[value === "+" ? styles.circle : styles.circleWithValue, { borderColor: Colors[colorScheme].primary }]}
       onPress={onPress} 
       disabled={!onPress} // Disable touch if no onPress is provided
     >
-      <StyledText variant="caption" color={Colors[colorScheme].primary}>
+      <StyledText variant="caption" >
         {value}
       </StyledText>
     </TouchableOpacity>
@@ -33,6 +33,15 @@ const styles = StyleSheet.create({
     borderRadius: CIRCLE_SIZE / 2,
     borderWidth: 1,
     borderStyle: 'dashed',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 4,
+  },
+  circleWithValue: {
+    width: CIRCLE_SIZE,
+    height: CIRCLE_SIZE,
+    borderRadius: CIRCLE_SIZE / 2,
+    borderWidth: 0,
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 4,

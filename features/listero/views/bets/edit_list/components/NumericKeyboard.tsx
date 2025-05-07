@@ -1,62 +1,86 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text,Button, useTheme } from '@ui-kitten/components';
 import { ArrowUpDown } from 'lucide-react-native';
 import { GameTypeCodes,AnnotationType } from '@/constants/Bet';
+import NumberDisplay from './NumberDisplay';
+import { formatNumbers } from '../utils/numbers';
 
 interface NumericKeyboardProps {
-  isRangeMode: boolean;
   onNumberPress: (number: string) => void;
-  onRangePress: () => void;
   gameType:GameTypeCodes;
-  anotationType:AnnotationType;
+  annotationType:AnnotationType;
 }
 
 export default function NumericKeyboard({ 
-  isRangeMode, 
   onNumberPress, 
-  onRangePress,
-  anotationType,
+  annotationType,
   gameType
 }: NumericKeyboardProps) {
-  const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+  const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0',"Limpiar","OK"];
   const theme = useTheme();
+  const [numbersDisplay,setNumbersDisplay] = useState<string >("");
+  const [numbersClick,setNumbersClick] = useState<string >("");
+  const [numbersBuff,setNumbersBuff] = useState<string >("");
   useEffect(() => {
     console.log('NumericKeyboard is now visible and active.');
     // Aquí puedes añadir lógica adicional si es necesario,
     // como enfocar el primer botón para accesibilidad si usas refs,
     // o realizar alguna animación.
-  }, []); // El array vacío asegura que se ejecute solo una vez al montarse\  \
+  }, [numbersDisplay]); 
+  
   return (
-    
-    <View style={styles.container}>
-      <View style={styles.grid}>
-        {numbers.map((number) => (
-        <Button
-        key={number}
-        appearance='ghost'
-        status='primary'
-        style={{...styles.button,backgroundColor: theme['color-primary-100'],
-          borderColor: theme['color-primary-500']}}
-        onPress={() =>onNumberPress(number)}
-      >
-        <Text style={styles.buttonText}>{number}</Text>
-      </Button>
-         
-        ))}
-         <TouchableOpacity
-        style={[styles.button]}
-        onPress={onRangePress}
-      >
-        <ArrowUpDown size={24} color="#000" />
-        <Text style={styles.buttonText}>
-          {isRangeMode ? 'Fin de Rango' : 'Rango'}
-        </Text>
-      </TouchableOpacity>
-      </View>
+    <View>
+       <NumberDisplay
+            numbers={formatNumbers(gameType,annotationType, numbersBuff)}
+            annotationType={annotationType}
+            gameTypeCode={gameType}
+          />
+      <View style={styles.container}>
+        <View style={styles.grid}>
+          {numbers.map((number) => (
+          <Button
+          key={number}
+          appearance='ghost'
+          size='large'
+          status='primary'
+          style={{
+            ...styles.button
+            ,backgroundColor: theme['color-primary-100'],
+            borderColor: theme['color-primary-500']}}
+          onPress={() =>{
+            
+            if(number === "OK"){
+              console.log('OK -->',numbersBuff);
+              onNumberPress(numbersBuff)
+              setNumbersDisplay("");
+              setNumbersClick("");
+            }
+            else if(number === "Limpiar"){
+              setNumbersDisplay("");
+              setNumbersClick("");
+              setNumbersBuff("");
+            }
+            else{
+              setNumbersBuff((prev)=> prev + number)
+              setNumbersClick(number)
+              setNumbersDisplay(number)
+            }
+          
+          
+          } }
+        >
+          <Text style={styles.buttonText}>{number}</Text>
+        </Button>
+          
+          ))}
+        
+        </View>
       
      
+      </View>    
     </View>
+    
   );
 }
 

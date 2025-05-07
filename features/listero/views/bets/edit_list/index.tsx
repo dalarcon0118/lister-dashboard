@@ -7,6 +7,8 @@ import ColumnHeaders from './components/ColumnHeaders';
 import FijosCorridosColumn from './components/FijosCorridosColumn';
 import ParletColumn from './components/ParletColumn';
 import CentenasColumn from './components/CentenasColumn';
+import { FijosCorridosBet, ParletBet } from '@/types';
+import { useParlet } from './components/hooks/useParlet';
 
 interface BetsListScreenProps {
   drawId?: string;
@@ -14,16 +16,27 @@ interface BetsListScreenProps {
 
 
 export default function BetsListScreen({ drawId }: BetsListScreenProps) {
+  
   const colorScheme = useColorScheme() ?? 'light';
   
+  const [fijosCorridosList, setFijosCorridosList] = useState<FijosCorridosBet[]>([]);
+  
+  const [parletList, setParletList] = useState<ParletBet[]>([]);
+
+
+  const onSelectPlay = (plays:FijosCorridosBet[]) => {
+    setFijosCorridosList(plays);
+
+    console.log(`Selected play: ${plays}`);
+  };
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: Colors[colorScheme].background }]}>
       <ColumnHeaders />
       
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.gridContainer}>
-          <FijosCorridosColumn />
-          <ParletColumn bets={mockParlets} />
+          <FijosCorridosColumn onSelectPlay={onSelectPlay}/>
+          <ParletColumn fijosCorridosList={fijosCorridosList} />
           <CentenasColumn bets={mockCentenas} />
         </View>
       </ScrollView>

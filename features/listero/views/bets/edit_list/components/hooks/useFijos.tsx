@@ -10,12 +10,13 @@ const generateRandomId = () => Math.random().toString(36).substr(2, 9);
  * Custom hook to manage the state for Fijos/Corridos input,
  * including showing the numeric keyboard and handling bet numbers/amounts.
  */
-export const useFijosParlet = () => {
+export const useFijosParlet = ({
+    onSelectPlay
+}:any) => {
   const [showBetKeyboard, setShowBetKeyboard] = useState(false);
   const [showAmountKeyboard, setShowAmountKeyboard] = useState(false);
 
   const [fijosCorridosList, setFijosCorridos] = useState<FijosCorridosBet[]>([]);
-  const [isRangeMode, setIsRangeMode] = useState(false);
   const [currentBetInput, setBetCurrentInput] = useState('');
   const [currentAmountInput, setCurrentAmountInput] = useState('');
   const [betBuffer, setBetBuffer] = useState<number[]>([]); // Store bet numbers (type number)
@@ -28,8 +29,11 @@ export const useFijosParlet = () => {
   useEffect(() => {
     console.log('Bet Buffer changed:', betBuffer);
   }, [betBuffer]);
+  
   useEffect(() => {
-    console.log('Fijos List changed:', fijosCorridosList);
+    console.log('Fijos List changed:', fijosCorridosList.length);
+    console.log('Active Annotation Type changed:', activeAnnotationType);
+    (fijosCorridosList.length>0)? onSelectPlay(fijosCorridosList) : null
   }, [fijosCorridosList]);
 
 
@@ -47,7 +51,9 @@ export const useFijosParlet = () => {
   /**
    * Handles the press event on an AmountCircle.
    */
-  const handleAmountCirclePress = useCallback((betId: string, amountType: 'fijo' | 'corrido') => {
+  const handleAmountCirclePress = (betId: string, amountType: 'fijo' | 'corrido') => {
+    console.log(`Editing amount for bet ${betId}, type: ${amountType}`);
+
     setEditingBetId(betId);
     setEditingAmountType(amountType);
     setActiveAnnotationType(AnnotationTypes.Amount);
@@ -55,21 +61,24 @@ export const useFijosParlet = () => {
     setCurrentAmountInput(''); // Reset amount input
     setShowAmountKeyboard(true);
     setShowBetKeyboard(false); // Ensure bet keyboard is hidden
-    console.log(`Editing amount for bet ${betId}, type: ${amountType}`);
-  }, []);
+  };
 
+  const splitStringToPairs = (inputString: string): string[] => {
+    const pairs: string[] = [];
+    // Itera hasta el múltiplo de 2 más grande que sea menor o igual a la longitud de la cadena
+    for (let i = 0; i < inputString.length - (inputString.length % 2); i += 2) {
+      pairs.push(inputString.substring(i, i + 2));
+    }
+    return pairs;
+  };
   /**
    * Processes digit input when the BET keyboard is active.
    */
-  const handleBetKeyboardInput = useCallback((digit: string) => {
-    if (activeAnnotationType !== AnnotationTypes.Bet || activeGameType !== GameTypes.FIJOS_CORRIDOS) return;
 
-    const updatedInput = currentBetInput + digit;
-    setBetCurrentInput(updatedInput);
-
+  const handleDigitPress = useCallback((digit: string) => {
     const maxLength = 2;
-    if (updatedInput.length === maxLength) {
-      const betNumber = parseInt(updatedInput, 10);
+    if (digit.length === maxLength) {
+      const betNumber = parseInt(digit, 10);
       const newBet: FijosCorridosBet = {
         id: generateRandomId(),
         bet: betNumber,
@@ -81,16 +90,34 @@ export const useFijosParlet = () => {
       setBetCurrentInput(''); // Reset for next bet input
       // Keep keyboard open for potentially more bets
     }
+  },[]);
+
+  const handleBetKeyboardInput = useCallback((digit: string) => {
+    console.log(`activeAnnotationType input: ${activeAnnotationType}`);
+    if (activeAnnotationType !== AnnotationTypes.Bet || activeGameType !== GameTypes.FIJOS_CORRIDOS) return;
+
+    //    setBetCurrentInput(updatedInput);
+    const list = splitStringToPairs(digit);
+    list.forEach((digit) => {
+      handleDigitPress(digit);
+    });
+    hideBetKeyboard();
+    
   }, [activeAnnotationType, activeGameType, currentBetInput]);
 
   /**
    * Processes digit input when the AMOUNT keyboard is active.
    */
-  const handleAmountKeyboardInput = useCallback((digit: string) => {
-    if (activeAnnotationType !== AnnotationTypes.Amount || !editingBetId || !editingAmountType) return;
-    // Add validation if needed (e.g., max amount length based on GameTypeLimits)
-    setCurrentAmountInput(prev => prev + digit);
-  }, [activeAnnotationType, editingBetId, editingAmountType]);
+  const handleAmountKeyboardInput = (digit: string) => {
+    setCurrentAmountInput(digit);
+    
+    finalizeAmountInput(digit);
+    setCurrentAmountInput('');
+    setShowAmountKeyboard(false);
+    setEditingBetId(null);
+    setEditingAmountType(null);
+    setActiveAnnotationType(null);
+  };
 
 
   /**
@@ -105,6 +132,7 @@ export const useFijosParlet = () => {
           : bet
       )
     );
+    //onSelectPlay(fijosCorridosList)
   }, []);
 
   /**
@@ -119,16 +147,20 @@ export const useFijosParlet = () => {
           : bet
       )
     );
+   // onSelectPlay(fijosCorridosList)
+
   }, [betBuffer]);
 
 
   /**
    * Finalizes amount entry, checks buffer, and potentially shows confirmation.
    */
-  const finalizeAmountInput = useCallback(() => {
-    if (activeAnnotationType !== AnnotationTypes.Amount || !editingAmountType || currentAmountInput === '') return;
+  const finalizeAmountInput = (amount:string) => {
+    
+    console.log(activeAnnotationType,editingAmountType,currentAmountInput)
+    if (activeAnnotationType !== AnnotationTypes.Amount || !editingAmountType || amount === '') return;
 
-    const amountValue = parseInt(currentAmountInput, 10);
+    const amountValue = parseInt(amount, 10);
     if (isNaN(amountValue)) return; // Invalid amount
 
     const applyAmount = (applyToAll: boolean) => {
@@ -138,12 +170,7 @@ export const useFijosParlet = () => {
             // Apply only to the one being edited explicitly
             applyAmountToSingleBet(editingBetId, editingAmountType, amountValue);
         }
-        setBetBuffer([]); // Clear buffer after amount is applied
-        setCurrentAmountInput('');
-        setShowAmountKeyboard(false);
-        setEditingBetId(null);
-        setEditingAmountType(null);
-        setActiveAnnotationType(null);
+        
     };
 
     if (betBuffer.length > 1) {
@@ -160,15 +187,7 @@ export const useFijosParlet = () => {
       // If buffer has 0 or 1 item, just apply to the currently edited bet
       applyAmount(false); // Apply to single bet
     }
-  }, [
-      activeAnnotationType,
-      editingBetId,
-      editingAmountType,
-      currentAmountInput,
-      betBuffer,
-      applyAmountToSingleBet,
-      applyAmountToBufferedBets
-  ]);
+  };
 
 
   /**
@@ -180,28 +199,29 @@ export const useFijosParlet = () => {
     // Don't reset activeAnnotationType if user might switch to amount
   }, []);
 
+  const hideAmountKeyboard = useCallback(() => {
+    setShowAmountKeyboard(false);
+    setCurrentAmountInput('');
+    // Don't reset activeAnnotationType if user might switch to amount
+  }, []);
+
   /**
    * Hides the AMOUNT numeric keyboard and resets amount input context.
    * This function effectively finalizes the amount input.
    */
-  const hideAmountKeyboard = useCallback(() => {
-      // Finalize input when keyboard is hidden
-      finalizeAmountInput();
-      // Resetting state is now handled within finalizeAmountInput's applyAmount function
-  }, [finalizeAmountInput]);
+ 
 
 
   return {
     fijosCorridosList,
-    isRangeMode,
     showBetKeyboard,
     showAmountKeyboard, // Renamed state for clarity
     handleAddBetPress,
     handleAmountCirclePress,
     hideBetKeyboard,
-    hideAmountKeyboard, // Renamed function for clarity
+    hideAmountKeyboard,
     handleBetKeyboardInput, // Renamed function for clarity
-    handleAmountKeyboardInput, // New handler for amount keyboard
+    handleAmountKeyboardInput,
     // Removed handleAmount as finalizeAmountInput covers the logic
   };
 };

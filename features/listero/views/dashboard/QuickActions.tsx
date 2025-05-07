@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import { Layout, Text, Button, Input } from '@ui-kitten/components';
 import LayoutConstants from '@/constants/Layout';
-import { DrawerModal } from '@/components/ui/DrawerModal';
-import Bot_Modal from '@/components/ui/Bot_Modal';
 import BottomDrawer from '@/components/ui/BottomDrawer';
 
 interface QuickActionsProps {

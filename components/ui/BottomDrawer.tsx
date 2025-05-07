@@ -7,7 +7,8 @@ import {
   Keyboard,
   Platform,
   KeyboardAvoidingView,
-  Dimensions
+  Dimensions,
+  ScrollView
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -116,9 +117,10 @@ export default function BottomDrawer({
                   <X size={24} color="#333" />
                 </View>
               </TouchableWithoutFeedback>
-              
+              <ScrollView>
+                    
                     {children}
-                
+                    </ScrollView>
 
                 
                

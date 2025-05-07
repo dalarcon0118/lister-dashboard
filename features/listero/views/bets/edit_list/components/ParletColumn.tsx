@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import StyledText from '@/components/typography/StyledText';
 import Layout from '@/constants/Layout';
 import Colors from '@/constants/Colors';
 import AmountCircle from './AmountCircle';
+import BetCircle from './BetCircle';
+import { FijosCorridosBet } from '@/types';
+import { useParlet } from './hooks/useParlet';
+import BottomDrawer from '@/components/ui/BottomDrawer';
+import NumericKeyboard from './NumericKeyboard';
 
 interface ParletBet {
   id: string;
@@ -12,29 +17,74 @@ interface ParletBet {
 }
 
 interface ParletColumnProps {
-  bets: ParletBet[];
+  fijosCorridosList:FijosCorridosBet[];
 }
 
-export default function ParletColumn({ bets }: ParletColumnProps) {
+export default function ParletColumn({ fijosCorridosList }: ParletColumnProps) {
+  const { 
+    promptToAddAsParlet, 
+    potentialParletNumbers } = useParlet();
+
+  const [parletList, setParletList] = useState<ParletBet[]>([]);
+
+  const renderKeyboard = () => {
+  
+    return (
+      <BottomDrawer isVisible={isVisible} onClose={onClose} title='' height={"50%"}>
+       
+        <NumericKeyboard
+          onNumberPress={(number:string)=>{
+            onNumberPress(number); 
+
+          }} // Pass the correct handler
+          annotationType={annotationType}
+          gameType={GameTypes.FIJOS_CORRIDOS} // Assuming this column is always for this type
+        />
+        {/* Optionally add a "Done" button here for the amount keyboard */}
+      </BottomDrawer>
+    );
+  };
+  
+ 
   return (
     <View style={[styles.column, styles.colParlet]}>
       <View style={styles.columnContent}>
-        {bets.map((item) => (
+        {parletList.map((item) => (
           <View key={item.id} style={styles.parletBlock}>
             <View style={styles.parletNumbers}>
-              {item.bets.map((bet, index) => (
-                <StyledText key={index} style={styles.parletBetText}>
-                  {bet.toString().padStart(2, '0')}
-                </StyledText>
-              ))}
+              <BetCircle  value= {"+"} onPress={()=>promptToAddAsParlet(fijosCorridosList)}/>
             </View>
             <AmountCircle amount={item.amount} />
           </View>
         ))}
       </View>
+      <View style={styles.columnContent}>
+        {parletList.map((item) => (
+          <View key={item.id} style={styles.parletBlock}>
+            <View style={styles.parletNumbers}>
+              <BetCircle  value= {"+"} onPress={()=>{}}/>
+            </View>
+            <AmountCircle amount={item.amount} />
+          </View>
+        ))}
+      </View>
+
+      <View style={styles.columnContent}>
+       
+          <View key={`add-row-${Math.random().toString(36).substr(2, 9)}`}  style={styles.parletBlock}>
+            <View style={styles.parletNumbers}>
+              <BetCircle  value= {"+"} onPress={()=>{}}/>
+            </View>
+            <AmountCircle amount={"$"} />
+          </View>
+      </View>
     </View>
   );
 }
+/*{item.bets.map((bet, index) => (
+                 <BetCircle key={index} value= {"+"} onPress={()=>{}}/>
+                
+              ))}*/
 
 const styles = StyleSheet.create({
   column: {

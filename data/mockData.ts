@@ -1,4 +1,4 @@
-import { BetType, DrawRules, DrawType, FinancialSummary, GameType } from '@/types';
+import { BetType, DrawRules, DrawType, FinancialSummary, GameType,FijosCorridosBet,ParletBet, CentenaBet } from '@/types';
 
 export const mockFinancialSummary: FinancialSummary = {
   totalCollected: 250.75,
@@ -177,37 +177,20 @@ export const roleDescriptions: Record<UserRole, string> = {
   admin: 'Administrador del sistema con acceso completo'
 };
 // Define interfaces for the bet types
-interface FijoCorridoBet {
-  id: string;
-  bet: number;
-  fijoAmount: number | 'X';
-  corridoAmount: number | 'X';
-}
 
-interface ParletBet {
-  id: string;
-  bets: number[];
-  amount: number;
-}
-
-interface CentenaBet {
-  id: string;
-  bet: number;
-  amount: number;
-}
 
 // Mock data based on the image
-export const mockFijosCorridos: FijoCorridoBet[] = [
+export const mockFijosCorridos: FijosCorridosBet[] = [
   { id: 'fc1', bet: 47, fijoAmount: 20, corridoAmount: 20 }, // Note: 47 is partially visible
   { id: 'fc2', bet: 57, fijoAmount: 20, corridoAmount: 20 },
   { id: 'fc3', bet: 67, fijoAmount: 20, corridoAmount: 20 },
-  { id: 'fc4', bet: 82, fijoAmount: 500, corridoAmount: 'X' },
-  { id: 'fc5', bet: 9, fijoAmount: 1200, corridoAmount: 'X' },
-  { id: 'fc6', bet: 20, fijoAmount: 1200, corridoAmount: 'X' },
-  { id: 'fc7', bet: 99, fijoAmount: 1200, corridoAmount: 'X' },
-  { id: 'fc8', bet: 74, fijoAmount: 1100, corridoAmount: 'X' },
-  { id: 'fc9', bet: 6, fijoAmount: 1100, corridoAmount: 'X' },
-  { id: 'fc10', bet: 59, fijoAmount: 1100, corridoAmount: 'X' },
+  { id: 'fc4', bet: 82, fijoAmount: 500, corridoAmount: null },
+  { id: 'fc5', bet: 9, fijoAmount: 1200, corridoAmount: null },
+  { id: 'fc6', bet: 20, fijoAmount: 1200, corridoAmount: null },
+  { id: 'fc7', bet: 99, fijoAmount: 1200, corridoAmount: null },
+  { id: 'fc8', bet: 74, fijoAmount: 1100, corridoAmount: null },
+  { id: 'fc9', bet: 6, fijoAmount: 1100, corridoAmount: null },
+  { id: 'fc10', bet: 59, fijoAmount: 1100, corridoAmount: null },
 ];
 
 export const mockParlets: ParletBet[] = [

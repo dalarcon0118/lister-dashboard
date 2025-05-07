@@ -18,7 +18,7 @@ import { DrawType as Draw, GameType, BetType } from '@/types';
 import { mockDraws, mockGameTypes, commonAmounts } from '@/data/mockData';
 
 import { isValidBetNumbers, getMaxLength } from '@/utils/betUtils';
-import NumberDisplay from './NumberDisplay';
+import NumberDisplay from '../edit_list/components/NumberDisplay';
 import CustomNumericKeyboard from './CustomNumericKeyboard';
 import QuickAmountButtons from './QuickAmountButtons';
 import BetSummary from './BetSummary';
