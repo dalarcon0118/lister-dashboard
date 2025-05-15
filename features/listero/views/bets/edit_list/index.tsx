@@ -25,6 +25,7 @@ export default function BetsListScreen({ drawId }: BetsListScreenProps) {
 
 
   const onSelectPlay = (plays:FijosCorridosBet[]) => {
+    console.log(JSON.stringify(plays))
     setFijosCorridosList(plays);
 
     console.log(`Selected play: ${plays}`);

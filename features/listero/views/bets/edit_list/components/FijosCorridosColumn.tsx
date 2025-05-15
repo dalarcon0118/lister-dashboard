@@ -74,12 +74,12 @@ export default function FijosCorridosColumn({
             
            {/* Fijo Amount Circle - Clickable */}
            <AmountCircle
-              amount={item.fijoAmount !== null ? item.fijoAmount : "$"} // Show '$' if null
+              amount={item.fijoAmount} // Show '$' if null
               onPress={() => handleAmountCirclePress(item.id, 'fijo')} // Pass betId and type
             />
             {/* Corrido Amount Circle - Clickable */}
             <AmountCircle
-              amount={item.corridoAmount !== null ? item.corridoAmount : "$"} // Show '$' if null
+              amount={item.corridoAmount} // Show '$' if null
               onPress={() => handleAmountCirclePress(item.id, 'corrido')} // Pass betId and type
             />
           </View>

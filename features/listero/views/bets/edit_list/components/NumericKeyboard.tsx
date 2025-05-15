@@ -23,7 +23,7 @@ export default function NumericKeyboard({
   const [numbersClick,setNumbersClick] = useState<string >("");
   const [numbersBuff,setNumbersBuff] = useState<string >("");
   useEffect(() => {
-    console.log('NumericKeyboard is now visible and active.');
+    console.log(`NumericKeyboard is now visible and active. ${gameType},${annotationType}`);
     // Aquí puedes añadir lógica adicional si es necesario,
     // como enfocar el primer botón para accesibilidad si usas refs,
     // o realizar alguna animación.

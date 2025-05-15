@@ -40,7 +40,7 @@ export interface FijosCorridosBet {
 export interface ParletBet {
   id: string;
   bets: number[];
-  amount: number;
+  amount?: number | null;
 }
 
 export interface CentenaBet {

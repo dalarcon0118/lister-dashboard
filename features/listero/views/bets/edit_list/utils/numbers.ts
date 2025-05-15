@@ -46,3 +46,11 @@ export const numbersTwoDigits = (numbers: string) => {
   
     return numbers;
   };
+
+  export const splitStringToPairs = (inputString: string): string[] => {
+    const pairs: string[] = [];
+    for (let i = 0; i < inputString.length - (inputString.length % 2); i += 2) {
+      pairs.push(inputString.substring(i, i + 2));
+    }
+    return pairs;
+  };
